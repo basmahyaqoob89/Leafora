@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 const links = [
   ['about', 'Our Story'],
-  ['journal', 'Plant Journal'],
   ['how', 'How It Works'],
   ['features', 'The Observatory'],
 ];

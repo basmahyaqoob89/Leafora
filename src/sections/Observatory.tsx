@@ -110,7 +110,7 @@ export default function Observatory() {
   return (
     <section className="living-section" id="features">
       <div className="living-heading reveal">
-        <SectionHeading eyebrow="04 — The botanical observatory">A little world,<br /><i>waiting for your leaf.</i></SectionHeading>
+        <SectionHeading eyebrow="03 — The Botanical Observatory">A little world,<br /><i>waiting for your leaf.</i></SectionHeading>
         <p>Place your leaf inside our glass observatory. Watch the instruments come alive, then discover its botanical story.</p>
       </div>
       <div className="living-experience" data-phase={phase}>

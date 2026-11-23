@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import HeroSection from '../sections/HeroSection';
 import OurStory from '../sections/OurStory';
 import ModelCoverage from '../sections/ModelCoverage';
-import PlantJournal from '../sections/PlantJournal';
 import HowItWorks from '../sections/HowItWorks';
 import Observatory from '../sections/Observatory';
 import ClosingSection from '../sections/ClosingSection';
@@ -33,7 +32,6 @@ export default function HomePage() {
       <HeroSection />
       <OurStory />
       <ModelCoverage />
-      <PlantJournal />
       <HowItWorks />
       <Observatory />
       <ClosingSection />

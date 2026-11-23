@@ -31,7 +31,7 @@ export default function HowItWorks() {
   return (
     <section className="section growth-section" id="how">
       <div className="growth-heading reveal">
-        <SectionHeading eyebrow="03 — Follow the growth">From a tiny seed<br />to <i>clearer answers.</i></SectionHeading>
+        <SectionHeading eyebrow="02 — How It Works">From a tiny seed<br />to <i>clearer answers.</i></SectionHeading>
         <p>Scroll down and watch the journey grow. Each new leaf is a step in understanding your plant.</p>
       </div>
       <div className="growth-layout" ref={track}>

@@ -7,7 +7,7 @@ export default function OurStory() {
         <div className="about-bubble">Small insights. Healthier plants.</div>
       </div>
       <div className="about-copy reveal">
-        <SectionHeading eyebrow="01 — The idea behind Leafora">
+        <SectionHeading eyebrow="01 — Our Story">
           Technology with
           <br />a <i>green heart.</i>
         </SectionHeading>

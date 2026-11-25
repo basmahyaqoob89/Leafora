@@ -2,6 +2,9 @@
 .mobile-links a { padding: 12px; border-bottom: 1px solid var(--line); }
 .mobile-links a:hover { background: var(--sage-2); }
 .leaf-upload, .leaf-upload .ant-upload { display: block; width: 100%; }
+.leaf-drop { padding: 5px; border: 1px dashed var(--line-2); border-radius: 12px; text-align: center; }
+.leaf-drop[data-dragging="true"] { border-color: var(--forest); background: var(--sage-2); }
+.leaf-drop small { display: block; margin: 4px 0; color: var(--muted); }
 .leaf-upload .living-button.ant-btn { height: auto; white-space: normal; color: white; background: var(--forest); border-color: var(--forest); }
 .leaf-upload .living-button.ant-btn:not(:disabled):hover {
   color: white;
@@ -35,7 +38,11 @@
 .report-sheet dd { margin: 4px 0 0; font-size: 14px; overflow-wrap: anywhere; }
 .report-sheet .living-report-blocks { padding-top: 18px; border-top: 1px solid var(--line); margin-top: 28px; }
 .report-sheet .living-report-block h2 { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--forest); margin: 0 0 8px; }
-.report-sheet .living-report-block li { font-size: 13px; }
+.report-sheet .living-report-block { min-width: 0; overflow-wrap: anywhere; }
+.report-sheet .living-report-block li, .report-sheet .living-report-block p { font-size: .875rem; }
+.report-sheet .living-report-block p { margin: 0; }
+.report-sheet .report-advice { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.report-advice .living-report-block { padding: 14px; border: 1px solid var(--line); border-radius: 8px; }
 .report-sheet .living-report-bottom { margin-top: 22px; }
 .report-sheet .living-report-bottom button { min-height: 44px; }
 .report-back { margin-top: 20px; min-height: 44px; }
@@ -156,6 +163,11 @@
   .coverage-intro { grid-template-columns: 1fr; }
   .coverage-count { justify-self: start; }
   .report-sheet .living-report-bottom { flex-wrap: wrap; }
+}
+
+@media screen and (max-width: 640px) {
+  .report-sheet .living-report-main, .report-sheet .report-advice { grid-template-columns: minmax(0, 1fr); }
+  .report-sheet .living-report-top { flex-wrap: wrap; }
 }
 
 @media print {

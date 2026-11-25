@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import type { HerbariumReport } from '../types/plant.types';
-import { getReportDetails, illustrativeDisclaimer } from './reportDetails';
+import { getAdviceSections, getReportDetails, illustrativeDisclaimer } from './reportDetails';
 
 const forest = '#1d4a33';
 const ink = '#17231b';
@@ -120,6 +120,7 @@ export async function downloadReportPdf(report: HerbariumReport) {
 
   notes('Field Observations', report.diagnosis.fieldObservations);
   notes('Care Notes', report.diagnosis.careRecommendations);
+  for (const { title, items } of getAdviceSections(report.diagnosis)) notes(title, items);
 
   const pages = pdf.getNumberOfPages();
   for (let page = 1; page <= pages; page++) {

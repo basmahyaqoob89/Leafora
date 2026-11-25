@@ -1,6 +1,19 @@
-import type { HerbariumReport } from '../types/plant.types';
+import type { HerbariumReport, ReportDiagnosis } from '../types/plant.types';
 
 export const illustrativeDisclaimer = 'Illustrative example — not a real AI prediction';
+
+const adviceTitles = {
+  organic: 'Organic Advice',
+  chemical: 'Chemical Advice',
+  prevention: 'Prevention Advice',
+} as const;
+
+export function getAdviceSections({ advice }: ReportDiagnosis) {
+  return (Object.keys(adviceTitles) as (keyof typeof adviceTitles)[]).map(key => ({
+    title: adviceTitles[key],
+    items: advice?.[key] ?? [],
+  }));
+}
 
 export function getReportDetails({ diagnosis, specimen }: HerbariumReport) {
   const illustrative = diagnosis.status === 'illustrative';
@@ -11,10 +24,10 @@ export function getReportDetails({ diagnosis, specimen }: HerbariumReport) {
     specimenName: diagnosis.specimen?.name || specimen.name || 'Unnamed specimen',
     source: specimen.source === 'sample' ? 'Sample leaf' : 'Uploaded image',
     status: illustrative ? 'Illustrative example' : 'Analysis complete',
-    plant: illustrative ? undefined : diagnosis.plantName,
-    condition: illustrative ? undefined : diagnosis.predictedCondition,
+    plant: diagnosis.plantName,
+    condition: diagnosis.predictedCondition,
     detectedClass: illustrative ? undefined : diagnosis.detectedClass,
-    confidence: !illustrative && typeof confidence === 'number' && confidence >= 0 && confidence <= 1
+    confidence: typeof confidence === 'number' && confidence >= 0 && confidence <= 1
       ? new Intl.NumberFormat('en', { style: 'percent', maximumFractionDigits: 1 }).format(confidence)
       : undefined,
   };

@@ -55,8 +55,8 @@ Open the local URL printed by Vite. The default experience works with no environ
 
 - Responsive homepage with Our Story, a planned model coverage section, an animated How It Works timeline, and the Botanical Observatory.
 - Coverage panel for 38 PlantVillage plant health classes. Expandable plant cards are ready to render verified labels. The current data file is empty and the UI shows a pending state.
-- Leaf image selection with a specimen preview, validation feedback, replace and remove controls, and an illustrated sample.
-- An inspection progress state and a dedicated report with specimen details, field observations, and care notes. Completed API responses can also display plant, condition, detected class, and confidence when provided.
+- Leaf image selection and drag-and-drop with a specimen preview, validation feedback, replace and remove controls, and an illustrated sample.
+- An inspection progress state and a dedicated report with specimen details, predicted condition, confidence, field observations, care notes, and separate organic, chemical, and prevention advice cards.
 - Client-side PDF download and a separate print action.
 
 | URL | Behavior |
@@ -76,7 +76,7 @@ Open the local URL printed by Vite. The default experience works with no environ
 
 ## AI integration status
 
-The default workflow uses a local mock that waits about 4.4 seconds and returns fixed observations and care notes. It performs no image classification and the report labels its output as illustrative. Sample specimens always use this path.
+The default workflow uses a local mock that waits about 4.4 seconds and returns a fixed example prediction, confidence, observations, and advice. It performs no image classification and the report labels its output as illustrative. Sample specimens always use this path.
 
 The frontend includes an opt-in HTTP integration for real uploaded files. This repository contains no inference backend or verified connection to EfficientNetB0 or Gemini. Configuring an API URL alone does not supply a trained model. The planned 38-class coverage is based on PlantVillage, and the exact labels used for training are still needed.
 
@@ -84,14 +84,11 @@ The frontend includes an opt-in HTTP integration for real uploaded files. This r
 
 Copy [`.env.example`](.env.example) to `.env.local` when a backend is available. Set `VITE_API_BASE_URL` to the backend base URL, such as `http://localhost:8000`, and restart Vite. Leave it blank for the demo. Vite exposes `VITE_*` values to the browser, so keep API keys and credentials on the backend.
 
-The frontend sends `POST /diagnosis` with a multipart file field named `image`. The Axios timeout is 30 seconds. A backend on a separate origin needs to allow requests from the frontend origin. A failed request shows a retry message in the Observatory.
+The Axios client uses a 30-second timeout and sends a multipart POST to `/predict` by default. It retains the existing multipart field `image` for integration testing. Set `VITE_PREDICT_PATH=/diagnosis` if testing with a service that implements the previous repository route. A service on a separate origin needs to allow requests from the frontend origin.
 
-The expected JSON response is defined in [`src/types/plant.types.ts`](src/types/plant.types.ts). It includes:
+The client checks responses against the repository's existing format in [`src/types/plant.types.ts`](src/types/plant.types.ts), with `status: complete`, specimen metadata, observation and care lists, and optional prediction details. In this existing format, confidence is a number from 0 to 1. The report uses a separate typed advice model. The illustrative workflow supplies all three advice categories. With the existing HTTP response format, the advice cards show that no notes are available.
 
-- `status` set to `complete` for a real result or `illustrative` for demonstration output.
-- `specimen` with `name` and `source`.
-- `fieldObservations` and `careRecommendations` as string arrays.
-- Optional `plantName`, `predictedCondition`, `detectedClass`, and `confidence` as a number from 0 to 1.
+Confirm the multipart field, response keys, confidence scale, and advice fields with the FastAPI team before connecting the live service. Update the client adapter once those details are confirmed.
 
 ## Latest updates
 

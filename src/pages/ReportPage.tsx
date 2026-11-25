@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { reportKey } from '../hooks/usePlantDiagnosis';
 import type { HerbariumReport } from '../types/plant.types';
-import { getReportDetails, illustrativeDisclaimer } from '../utils/reportDetails';
+import { getAdviceSections, getReportDetails, illustrativeDisclaimer } from '../utils/reportDetails';
 
 const back = <Link className="btn report-back" to="/#features">Return to the Observatory</Link>;
 
@@ -64,14 +64,19 @@ function ReportContents({ report }: { report: HerbariumReport }) {
           <div><dt>Source</dt><dd>{details.source}</dd></div>
           <div><dt>Observation status</dt><dd className="living-report-status">{details.status}</dd></div>
           {details.plant && <div><dt>Plant</dt><dd>{details.plant}</dd></div>}
-          {details.condition && <div><dt>Predicted condition</dt><dd>{details.condition}</dd></div>}
+          <div><dt>Predicted condition</dt><dd>{details.condition ?? 'Unavailable'}</dd></div>
           {details.detectedClass && <div><dt>Detected class</dt><dd>{details.detectedClass}</dd></div>}
-          {details.confidence && <div><dt>Confidence</dt><dd>{details.confidence}</dd></div>}
+          <div><dt>Confidence</dt><dd>{details.confidence ?? 'Unavailable'}</dd></div>
         </dl>
       </div>
       <div className="living-report-blocks">
         <ReportNotes title="Field Observations" items={diagnosis.fieldObservations} />
         <ReportNotes title="Care Notes" items={diagnosis.careRecommendations} />
+      </div>
+      <div className="living-report-blocks report-advice">
+        {getAdviceSections(diagnosis).map(({ title, items }) => (
+          <ReportNotes key={title} title={title} items={items} />
+        ))}
       </div>
       <div className="living-report-bottom">
         <span>LEAFORA · HERBARIUM</span>

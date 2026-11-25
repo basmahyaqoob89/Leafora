@@ -4,6 +4,7 @@ export interface Specimen {
   source: 'upload' | 'sample';
 }
 
+// Existing frontend response format. The FastAPI response schema is pending.
 export interface DiagnosisResponse {
   plantName?: string;
   predictedCondition?: string;
@@ -15,13 +16,21 @@ export interface DiagnosisResponse {
   status: 'illustrative' | 'complete';
 }
 
+export interface ReportDiagnosis extends DiagnosisResponse {
+  advice?: {
+    organic: string[];
+    chemical: string[];
+    prevention: string[];
+  };
+}
+
 export interface DiagnosisRequest {
   specimen: Specimen;
   file?: File;
 }
 
 export interface HerbariumReport {
-  diagnosis: DiagnosisResponse;
+  diagnosis: ReportDiagnosis;
   specimen: Specimen;
   createdAt?: string;
 }

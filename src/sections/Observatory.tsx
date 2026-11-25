@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Upload } from 'antd';
+import { Button, Spin, Upload } from 'antd';
 import { ImagePlus, Upload as UploadIcon } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { apiBaseUrl } from '../api/axiosInstance';
 import { previewDuration } from '../api/mockDiagnosis';
+import { getDiagnosisErrorMessage } from '../api/plantApi';
 import SectionHeading from '../components/SectionHeading';
 import SpecimenChamber from '../components/SpecimenChamber';
 import { reportKey, usePlantDiagnosis } from '../hooks/usePlantDiagnosis';
@@ -37,6 +38,7 @@ export default function Observatory() {
   const [selection, setSelection] = useState<DiagnosisRequest>();
   const [error, setError] = useState('');
   const [reading, setReading] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [progress, setProgress] = useState(0);
   const active = useRef(false);
   const diagnosis = usePlantDiagnosis();
@@ -69,6 +71,10 @@ export default function Observatory() {
       setError('Choose an image that is 10 MB or smaller.');
       return;
     }
+    if (file.size === 0) {
+      setError('This file is empty. Choose a different image.');
+      return;
+    }
     setReading(true);
     try {
       const image = await readImage(file);
@@ -99,7 +105,7 @@ export default function Observatory() {
         });
         navigate('/report');
       },
-      onError: () => setError('The inspection could not finish. Please try again.'),
+      onError: error => setError(getDiagnosisErrorMessage(error)),
     });
   }
 
@@ -126,16 +132,39 @@ export default function Observatory() {
                 <div className="living-progress-track" role="progressbar" aria-label="Optical inspection" aria-valuenow={preview ? Math.round(progress) : undefined}>
                   <div className={'living-progress-fill' + (preview ? '' : ' indeterminate')} style={{ width: preview ? progress + '%' : '35%' }} />
                 </div>
-                <span>{preview ? scanLabels[Math.min(3, Math.floor(progress / 25))] : 'Examining the specimen…'}</span>
+                <span><Spin size="small" /> {preview ? scanLabels[Math.min(3, Math.floor(progress / 25))] : 'Examining the specimen…'}</span>
               </div>
             ) : (
               <>
-                <Upload className="leaf-upload" accept=".jpg,.jpeg,.png,.webp" disabled={reading} showUploadList={false}
-                  beforeUpload={file => { void selectFile(file); return Upload.LIST_IGNORE; }}>
-                  <Button className="living-button" loading={reading} icon={<UploadIcon aria-hidden="true" />}>
-                    {selection ? 'Replace your leaf' : 'Upload your leaf'}
-                  </Button>
-                </Upload>
+                <div className="leaf-drop" data-dragging={dragging}
+                  onDragOver={event => {
+                    if (!event.dataTransfer.types.includes('Files')) return;
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = reading ? 'none' : 'copy';
+                    if (!reading) setDragging(true);
+                  }}
+                  onDragLeave={event => {
+                    if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+                      setDragging(false);
+                    }
+                  }}
+                  onDropCapture={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setDragging(false);
+                    if (reading) return;
+                    const { files } = event.dataTransfer;
+                    if (files.length > 1) setError('Drop one leaf image at a time.');
+                    else if (files.length === 1) void selectFile(files[0]);
+                  }}>
+                  <Upload className="leaf-upload" accept=".jpg,.jpeg,.png,.webp" disabled={reading} showUploadList={false}
+                    beforeUpload={file => { void selectFile(file); return Upload.LIST_IGNORE; }}>
+                    <Button className="living-button" loading={reading} icon={<UploadIcon aria-hidden="true" />} aria-describedby="leaf-drop-hint">
+                      {selection ? 'Replace your leaf' : 'Upload your leaf'}
+                    </Button>
+                  </Upload>
+                  <small id="leaf-drop-hint">or drop one image here</small>
+                </div>
                 <button className="living-button living-outline" type="button" disabled={reading} onClick={loadSample}>
                   <ImagePlus aria-hidden="true" /> Try a sample leaf
                 </button>
